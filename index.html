@@ -134,47 +134,95 @@
 
   <script>
     function checkStrength() {
-      const password = document.getElementById("password").value;
-      const strengthEl = document.getElementById("strength");
-      const fill = document.getElementById("fill");
-      const suggestionsEl = document.getElementById("suggestions");
+  // Get the value entered in the password field
+  const password = document.getElementById("password").value;
 
-      let strength = 0;
-      let suggestions = [];
+  // Get references to the DOM elements where we’ll update strength info
+  const strengthEl = document.getElementById("strength");      // For displaying "Strength: Weak/Medium/Strong"
+  const fill = document.getElementById("fill");                // The colored bar that fills according to strength
+  const suggestionsEl = document.getElementById("suggestions");// Where suggestions or "Nice!" message will be shown
 
-      if (password.length >= 6) strength++;
-      else suggestions.push("Use at least 6 characters");
+  // Initialize strength score and an array to hold suggestions
+  let strength = 0;
+  let suggestions = [];
 
-      if (/[a-z]/.test(password)) strength++; else suggestions.push("Add lowercase letters");
-      if (/[A-Z]/.test(password)) strength++; else suggestions.push("Add uppercase letters");
-      if (/[0-9]/.test(password)) strength++; else suggestions.push("Include numbers");
-      if (/[\W_]/.test(password)) strength++; else suggestions.push("Include symbols (e.g. @#$!)");
+  // ----------- RULES FOR SCORING PASSWORD STRENGTH -----------
 
-      if (password.length === 0) {
-        strengthEl.textContent = "Strength: ";
-        fill.className = "fill";
-        suggestionsEl.innerHTML = "";
-        return;
-      }
+  // Rule 1: Check for minimum length (at least 6 characters)
+  if (password.length >= 6) {
+    strength++;
+  } else {
+    suggestions.push("Use at least 6 characters");
+  }
 
-      if (strength <= 2) {
-        strengthEl.textContent = "Strength: Weak";
-        fill.className = "fill weak";
-      } else if (strength === 3 || strength === 4) {
-        strengthEl.textContent = "Strength: Medium";
-        fill.className = "fill medium";
-      } else {
-        strengthEl.textContent = "Strength: Strong";
-        fill.className = "fill strong";
-      }
+  // Rule 2: Check if password includes lowercase letters
+  if (/[a-z]/.test(password)) {
+    strength++;
+  } else {
+    suggestions.push("Add lowercase letters");
+  }
 
-      if (suggestions.length > 0) {
-        suggestionsEl.innerHTML = `<strong>Suggestions:</strong><ul>` +
-          suggestions.map(s => `<li>${s}</li>`).join('') + `</ul>`;
-      } else {
-        suggestionsEl.innerHTML = `<strong>Nice!</strong> Your password looks solid.`;
-      }
-    }
+  // Rule 3: Check for uppercase letters
+  if (/[A-Z]/.test(password)) {
+    strength++;
+  } else {
+    suggestions.push("Add uppercase letters");
+  }
+
+  // Rule 4: Check for numbers
+  if (/[0-9]/.test(password)) {
+    strength++;
+  } else {
+    suggestions.push("Include numbers");
+  }
+
+  // Rule 5: Check for special characters (symbols)
+  if (/[\W_]/.test(password)) {
+    strength++;
+  } else {
+    suggestions.push("Include symbols (e.g. @#$!)");
+  }
+
+  // ----------- HANDLE EMPTY PASSWORD FIELD -----------
+
+  if (password.length === 0) {
+    // If input is empty, reset everything
+    strengthEl.textContent = "Strength: ";
+    fill.className = "fill"; // Removes any color class like weak/medium/strong
+    suggestionsEl.innerHTML = ""; // Clear suggestions
+    return; // Exit function early
+  }
+
+  // ----------- DISPLAY STRENGTH LEVEL AND STYLE THE BAR -----------
+
+  if (strength <= 2) {
+    // Weak: score 0-2
+    strengthEl.textContent = "Strength: Weak";
+    fill.className = "fill weak";
+  } else if (strength === 3 || strength === 4) {
+    // Medium: score 3 or 4
+    strengthEl.textContent = "Strength: Medium";
+    fill.className = "fill medium";
+  } else {
+    // Strong: score 5
+    strengthEl.textContent = "Strength: Strong";
+    fill.className = "fill strong";
+  }
+
+  // ----------- SHOW SUGGESTIONS OR SUCCESS MESSAGE -----------
+
+  if (suggestions.length > 0) {
+    // If any suggestions were collected, show them in a bullet list
+    suggestionsEl.innerHTML =
+      `<strong>Suggestions:</strong><ul>` +
+      suggestions.map(s => `<li>${s}</li>`).join('') + // Turn array into list items
+      `</ul>`;
+  } else {
+    // No suggestions? Password is great!
+    suggestionsEl.innerHTML = `<strong>Nice!</strong> Your password looks solid.`;
+  }
+}
+
   </script>
 </body>
 </html>
